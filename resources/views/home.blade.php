@@ -67,7 +67,7 @@
                                 break;
                             }
                             ?>
-                            <li style="list-style: none;" id="<?= $search->searchTerm;?>" class="searchNow"><?= $search->searchTerm;?></li>
+                            <li style="list-style: none; border-bottom:1px solid lightgray; margin:10px;" id="<?= $search->searchTerm;?>" class="searchNow"><?= $search->searchTerm;?></li>
                             <?php
                             }
                             }else{

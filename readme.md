@@ -4,6 +4,11 @@ This flicker search engine is built on top of Laravel using NginX to serve the d
 
 A list of previous searches is shown below, clicking on these will search for these.
 
+clicking on any of the thumbnails will bring up a larger image.
+
+
+## Installation
+
 It is assumed that you have a laravel installation and MYSQL/NginX installed and that you are able to set up a simple .
 
 A simple nginx config for this application is as follows:
@@ -40,9 +45,15 @@ You will then need to create a mysql database with the name of flckr or alternat
 
 Then you will need to go to the root directory of the application and run php artisan migrate in order to have the database tables installed.
 
+
+## Decisions
+
 I went with Laravel as it is a great framework for when you need to set up a site really quickly.
 
 The modelling has been kept on a fairly simple basis with Models for Search criteria and the user themselves.
+
+
+## Desirables
 
 I unfortunately ran out of time and was unable to implement the following:
 
@@ -50,7 +61,8 @@ Unit testing.
 
 Angular.js Front end
 
-Upserting search terms rather then creating new terms and grouping search results.
+Upserting search terms rather then creating new terms each time, this will also enable us to remove the grouping of search results.
 
+At present the next and previous functionality for the pagination is not working properly, this is getting fixed as a priority, hopefully I have time.
 
 

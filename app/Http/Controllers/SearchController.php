@@ -18,6 +18,7 @@ class SearchController extends Controller
         $search = new Search();
         $search->searchTerm = $searchTerm;
         $search->user_id = Auth::user()->id;
+        $search->updated_at = new \DateTime();
         $search->save();
         $searchData = $this->getJson($searchTerm,1);
         //why is this not passing back to the page properly.
@@ -66,6 +67,7 @@ class SearchController extends Controller
         $search = new Search();
         $search->searchTerm = $searchTerm;
         $search->user_id = Auth::user()->id;
+        $search->updated_at = new \DateTime();
         $search->save();
         $searchData = $this->getJson($searchTerm, $pageNumber);
         return $searchData;

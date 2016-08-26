@@ -15,7 +15,7 @@ class Search extends Model
     /**
      * @var array
      */
-    protected $fillable = ['user','searchTerm'];
+    protected $fillable = ['user','searchTerm','updated_at','created_at'];
     /**
      * @var string
      */
