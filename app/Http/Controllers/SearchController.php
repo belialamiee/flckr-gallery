@@ -20,13 +20,9 @@ class SearchController extends Controller
         $search->user_id = Auth::user()->id;
         $search->save();
         $searchData = $this->getJson($searchTerm);
-
-
         //why is this not passing back to the page properly.
-        return back()->with(['searchData' => $searchData], 'searchTerm',$searchTerm);
+        return back()->with(['searchData' => $searchData, 'searchTerm',$searchTerm]);
     }
-
-
 
 
     /**Get Json from API
@@ -40,6 +36,7 @@ class SearchController extends Controller
         $results = json_decode(file_get_contents($url), true);
         $searchData['pageNumber'] = $results['photos']['page'];
         $searchData['pages'] = $results['photos']['pages'];
+        $searchData['searchTerm'] = $searchTerm;
         $searchResults = [];
 
         if ($results) {
@@ -58,4 +55,8 @@ class SearchController extends Controller
         $searchData['searchResults'] = $searchResults;
         return $searchData;
     }
+
+
+
+
 }

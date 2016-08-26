@@ -26,15 +26,11 @@ class HomeController extends Controller
     public function index()
     {
         $searches = DB::table('searches')->where('user_id', Auth::user()->id)->orderBy('created_at', 'DESC')->get();
-
         $searchData = Session::get('searchData');
-        $searchTerm = Session::get('searchTerm');
         return view('home',
             [
                 'searches' => $searches,
-                'searchData' => $searchData,
-                'currentUser' => Auth::user()->id,
-                'searchTerm' => $searchTerm
+                'searchData' => $searchData
             ]
         );
     }

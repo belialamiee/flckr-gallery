@@ -15,7 +15,7 @@
 
                                 <div class="col-md-6">
                                     <input type="text" class="form-control" id="searchTerm" name="searchTerm"
-                                           value="<?= $searchTerm?>">
+                                           value="{{ $searchData['searchTerm'] }}">
                                 </div>
                                 <div class="col-md-2">
                                     <button class="btn btn-default">
@@ -32,21 +32,20 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <?php
-                            if($searchData){
-                            foreach($searchData['searchResults'] as $result){?>
-                            <tr>
-                                <td style="max-width:100px;"><?= $result['title']; ?>
-                                </td>
-                                <td class="img"><img class="img"
-                                         src="https://farm<?=$result['farm'];?>.staticflickr.com/<?=$result['server'];?>/<?=$result['id'];?>_<?=$result['secret'];?>_t.jpg">
-                                </td>
-                            </tr>
-                            <?php }
-                            }?>
+
                             </tbody>
                         </table>
+                        <br/>
+                        <a class="btn btn-default next">
+                            Previous
+                        </a>
+                        <a class="btn btn-default previous">
+                            Next
+                        </a>
+
+
                     </div>
+
                 </div>
             </div>
         </div>
@@ -89,56 +88,90 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                 aria-hidden="true">&times;</span></button>
-                <div class="modal-body">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script type="text/javascript" src=""></script>
-    <script type="text/javascript">
-        //on click of the elements set it as the search term and submit the form.
-        $('.searchNow').on('click', function (e) {
-            var element = e.target;
-            $("#searchTerm").val(element.id);
-            $("#searchForm").submit();
-        });
-        var pages = "";
-        var pageNumber = "";
-                <?php if($searchData['pages']){
-                echo "pages = ". $searchData['pages'].";";
-                }?>
-               <?php if($searchData['pageNumber']){
-                echo "pageNumber = ". $searchData['pageNumber'].";";
-                }?>
+        <script type="text/javascript" src=""></script>
+        <script type="text/javascript">
 
-            var dataTable = $('#resultsTable').DataTable({
-            dom: '<"datatable-header"><""t><"datatable-footer"p>',
-
-        });
+            var tableData = "";
+            <?php if($searchData){
+                    echo "tableData = ". json_encode($searchData).";";
+                    }?>
 
 
-        $('.img').on('click', function (e) {
-            var src = e.target.src;
-            //remove the -t option which shows a thumb instead
-            src = src.slice(0,-6)+'.jpg';
-            var modalDisplay = $('#imageModal');
 
-            var img = '<img src="' + src + '" class="img-responsive"/>';
-            modalDisplay.modal();
-            modalDisplay.on('shown.bs.modal', function(){
-                $('#imageModal .modal-body').html(img);
+             //on click of the elements set it as the search term and submit the form.
+            $('.searchNow').on('click', function (e) {
+                var element = e.target;
+                $("#searchTerm").val(element.id);
+                $("#searchForm").submit();
             });
-            modalDisplay.on('hidden.bs.modal', function(){
-                $('#imageModal .modal-body').html('');
+            var pages = "";
+            var pageNumber = "";
+            <?php if($searchData['pages']){
+            echo "pages = ". $searchData['pages'].";";
+            }
+            if($searchData['pageNumber']){
+            echo "pageNumber = ". $searchData['pageNumber'].";";
+            }?>
+
+            $(function () {
+                        var dataTable = $('#resultsTable').DataTable({
+                            dom: '<"datatable-header"><""t><"datatable-footer">',
+                            data: tableData.searchResults,
+                            columns:[
+
+                                {
+                                    "data": "title",
+                                    render: function (data, type, full, meta) {
+                                        return data;
+                                    }
+                                },
+                                {
+                                    "data": "id",
+                                    render: function (data, type, full, meta) {
+                                       return '<img class="img" src="https://farm'+ full.farm + '.staticflickr.com/'+full.server+'/'+full.id+'_'+full.secret+'_t.jpg">';
+                                    }
+                                }
+                            ]
+                        });
+                    });
+
+            $('.next').on('click', function () {
+                pageNumber++;
+                //make ajax
+                console.log('call next data');
+
+
+            });
+            $('.previous').on('click', function () {
+                pageNumber--;
+                //make ajax
+                console.log('call previous data');
             });
 
-        });
 
-
-    </script>
+            $('.img').on('click', function (e) {
+                var src = e.target.src;
+                //remove the -t option which shows a thumb instead
+                src = src.slice(0, -6) + '.jpg';
+                var modalDisplay = $('#imageModal');
+                var img = '<img src="' + src + '" class="img-responsive"/>';
+                modalDisplay.modal();
+                modalDisplay.on('shown.bs.modal', function () {
+                    $('#imageModal .modal-body').html(img);
+                });
+                modalDisplay.on('hidden.bs.modal', function () {
+                    $('#imageModal .modal-body').html('');
+                });
+            });
+        </script>
 @endsection
