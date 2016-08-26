@@ -19,11 +19,14 @@ class SearchController extends Controller
         $search->searchTerm = $searchTerm;
         $search->user_id = Auth::user()->id;
         $search->save();
-        $searchResults = $this->getJson($searchTerm);
+        $searchData = $this->getJson($searchTerm);
+
 
         //why is this not passing back to the page properly.
-        return back()->with(['searchResults' => $searchResults], 'searchTerm',$searchTerm);
+        return back()->with(['searchData' => $searchData], 'searchTerm',$searchTerm);
     }
+
+
 
 
     /**Get Json from API
@@ -35,9 +38,15 @@ class SearchController extends Controller
     {
         $url = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6d5c5a20d108f8f56f324394d3e2381f&text=' . $searchTerm . '&per_page=5&format=json&nojsoncallback=1';
         $results = json_decode(file_get_contents($url), true);
+        $searchData['pageNumber'] = $results['photos']['page'];
+        $searchData['pages'] = $results['photos']['pages'];
         $searchResults = [];
+
         if ($results) {
             foreach ($results['photos']['photo'] as $photos) {
+
+                //this should be a modelled object instead of an array
+
                 $d['title'] = $photos['title'];
                 $d['farm'] = $photos['farm'];
                 $d['id'] = $photos['id'];
@@ -46,6 +55,7 @@ class SearchController extends Controller
                 $searchResults[] = $d;
             }
         }
-        return $searchResults;
+        $searchData['searchResults'] = $searchResults;
+        return $searchData;
     }
 }
