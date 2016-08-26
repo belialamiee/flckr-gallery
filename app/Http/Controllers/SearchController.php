@@ -19,7 +19,7 @@ class SearchController extends Controller
         $search->searchTerm = $searchTerm;
         $search->user_id = Auth::user()->id;
         $search->save();
-        $searchData = $this->getJson($searchTerm);
+        $searchData = $this->getJson($searchTerm,1);
         //why is this not passing back to the page properly.
         return back()->with(['searchData' => $searchData, 'searchTerm',$searchTerm]);
     }
@@ -27,12 +27,13 @@ class SearchController extends Controller
 
     /**Get Json from API
      * Ideally with time this would be moved out to a service
-     * @param $searchTerm
+     * @param string $searchTerm
+     * @param int $pageNumber
      * @return array
      */
-    public function getJson($searchTerm)
+    public function getJson($searchTerm, $pageNumber)
     {
-        $url = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6d5c5a20d108f8f56f324394d3e2381f&text=' . $searchTerm . '&per_page=5&format=json&nojsoncallback=1';
+        $url = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=fdac2e9676991ac53b34651adab52518&text=' . $searchTerm . '&per_page=5&page='.$pageNumber.'&format=json&nojsoncallback=1';
         $results = json_decode(file_get_contents($url), true);
         $searchData['pageNumber'] = $results['photos']['page'];
         $searchData['pages'] = $results['photos']['pages'];
@@ -57,6 +58,18 @@ class SearchController extends Controller
     }
 
 
+    public function ajax(Request $request){
+
+        $pageNumber = $request->pageNumber ? $request->pageNumber: 1;
+
+        $searchTerm = $request->searchTerm;
+        $search = new Search();
+        $search->searchTerm = $searchTerm;
+        $search->user_id = Auth::user()->id;
+        $search->save();
+        $searchData = $this->getJson($searchTerm, $pageNumber);
+        return $searchData;
+    }
 
 
 }

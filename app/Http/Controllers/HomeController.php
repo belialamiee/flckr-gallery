@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 
 class HomeController extends Controller
@@ -25,7 +24,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $searches = DB::table('searches')->where('user_id', Auth::user()->id)->orderBy('created_at', 'DESC')->get();
+        $searches = DB::table('searches')->where('user_id', Auth::user()->id)->orderBy('created_at', 'DESC')->groupBy('searchTerm')->get();
         $searchData = Session::get('searchData');
         return view('home',
             [

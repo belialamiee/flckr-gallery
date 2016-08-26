@@ -36,10 +36,10 @@
                             </tbody>
                         </table>
                         <br/>
-                        <a class="btn btn-default next">
+                        <a class="btn btn-default previous">
                             Previous
                         </a>
-                        <a class="btn btn-default previous">
+                        <a class="btn btn-default next">
                             Next
                         </a>
 
@@ -53,11 +53,12 @@
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Previous Searches <span style="color:lightgray"> - Displays only the latest 5 events;</span>
+                    <div class="panel-heading">Previous Searches <span style="color:lightgray"> - Displays only the latest 5 searches</span>
                     </div>
-                    <div class="panel-body">
+                    <div class="panel-body" style="cursor:pointer;">
                         <ul>
                             <?php
+
                             if(count($searches)){
                             $counter = 0;
                             foreach ($searches as $search) {
@@ -66,7 +67,7 @@
                                 break;
                             }
                             ?>
-                            <li id="<?= $search->searchTerm;?>" class="searchNow"><?= $search->searchTerm;?></li>
+                            <li style="list-style: none;" id="<?= $search->searchTerm;?>" class="searchNow"><?= $search->searchTerm;?></li>
                             <?php
                             }
                             }else{
@@ -97,81 +98,78 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <script type="text/javascript" src=""></script>
-        <script type="text/javascript">
+    <script type="text/javascript" src=""></script>
+    <script type="text/javascript">
 
-            var tableData = "";
-            <?php if($searchData){
-                    echo "tableData = ". json_encode($searchData).";";
-                    }?>
+        var tableData = "";
+        <?php if($searchData){
+                echo "tableData = ". json_encode($searchData).";";
+                }?>
+         //on click of the elements set it as the search term and submit the form.
+        $('.searchNow').on('click', function (e) {
+            var element = e.target;
+            $("#searchTerm").val(element.id);
+            $("#searchForm").submit();
+        });
+        var pages = "";
+        var pageNumber = "";
+                <?php if($searchData['pages']){
+                echo "pages = ". $searchData['pages'].";";
+                }
+                if($searchData['pageNumber']){
+                echo "pageNumber = ". $searchData['pageNumber'].";";
+                }?>
 
+                            var dataTable = $('#resultsTable').DataTable({
+            dom: '<"datatable-header"><""t><"datatable-footer">',
+            data: tableData.searchResults,
+            columns: [
 
-
-             //on click of the elements set it as the search term and submit the form.
-            $('.searchNow').on('click', function (e) {
-                var element = e.target;
-                $("#searchTerm").val(element.id);
-                $("#searchForm").submit();
+                {
+                    "data": "title",
+                    render: function (data, type, full, meta) {
+                        return data;
+                    }
+                },
+                {
+                    "data": "id",
+                    render: function (data, type, full, meta) {
+                        return '<img class="img" src="https://farm' + full.farm + '.staticflickr.com/' + full.server + '/' + full.id + '_' + full.secret + '_t.jpg">';
+                    }
+                }
+            ]
+        });
+        $('.img').on('click', function (e) {
+            var src = e.target.src;
+            //remove the -t option which shows a thumb instead
+            src = src.slice(0, -6) + '.jpg';
+            var modalDisplay = $('#imageModal');
+            var img = '<img src="' + src + '" class="img-responsive"/>';
+            modalDisplay.modal();
+            modalDisplay.on('shown.bs.modal', function () {
+                $('#imageModal .modal-body').html(img);
             });
-            var pages = "";
-            var pageNumber = "";
-            <?php if($searchData['pages']){
-            echo "pages = ". $searchData['pages'].";";
-            }
-            if($searchData['pageNumber']){
-            echo "pageNumber = ". $searchData['pageNumber'].";";
-            }?>
-
-            $(function () {
-                        var dataTable = $('#resultsTable').DataTable({
-                            dom: '<"datatable-header"><""t><"datatable-footer">',
-                            data: tableData.searchResults,
-                            columns:[
-
-                                {
-                                    "data": "title",
-                                    render: function (data, type, full, meta) {
-                                        return data;
-                                    }
-                                },
-                                {
-                                    "data": "id",
-                                    render: function (data, type, full, meta) {
-                                       return '<img class="img" src="https://farm'+ full.farm + '.staticflickr.com/'+full.server+'/'+full.id+'_'+full.secret+'_t.jpg">';
-                                    }
-                                }
-                            ]
-                        });
-                    });
-
-            $('.next').on('click', function () {
-                pageNumber++;
-                //make ajax
-                console.log('call next data');
-
-
+            modalDisplay.on('hidden.bs.modal', function () {
+                $('#imageModal .modal-body').html('');
             });
-            $('.previous').on('click', function () {
-                pageNumber--;
-                //make ajax
-                console.log('call previous data');
+        });
+
+        $('.next').on('click', function () {
+            pageNumber++;
+            var url = '/search-ajax/searchTerm/' + $("#searchTerm").val()+'/pageNumber/'+pageNumber;
+            $.get( url, function(data) {
+            tableData = data;
             });
 
+            dataTable.ajax.reload();
 
-            $('.img').on('click', function (e) {
-                var src = e.target.src;
-                //remove the -t option which shows a thumb instead
-                src = src.slice(0, -6) + '.jpg';
-                var modalDisplay = $('#imageModal');
-                var img = '<img src="' + src + '" class="img-responsive"/>';
-                modalDisplay.modal();
-                modalDisplay.on('shown.bs.modal', function () {
-                    $('#imageModal .modal-body').html(img);
-                });
-                modalDisplay.on('hidden.bs.modal', function () {
-                    $('#imageModal .modal-body').html('');
-                });
-            });
-        </script>
+        });
+        $('.previous').on('click', function () {
+            pageNumber--;
+            //make ajax
+            console.log('call previous data');
+        });
+    </script>
 @endsection

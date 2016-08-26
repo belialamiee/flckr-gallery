@@ -36,6 +36,7 @@ Route::group(['middleware' => 'web'], function () {
     Route::auth();
     Route::get('/home', 'HomeController@index');
     Route::post('/search', 'SearchController@search');
+    Route::get('/search-ajax/searchTerm/{searchTerm}/pageNumber/{pageNumber}','SearchController@ajax');
 });
 
 

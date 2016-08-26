@@ -1,27 +1,56 @@
-# Laravel PHP Framework
+# Flckr-Gallery
 
-[![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
-[![Total Downloads](https://poser.pugx.org/laravel/framework/d/total.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/framework/v/stable.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/framework/v/unstable.svg)](https://packagist.org/packages/laravel/framework)
-[![License](https://poser.pugx.org/laravel/framework/license.svg)](https://packagist.org/packages/laravel/framework)
+This flicker search engine is built on top of Laravel using NginX to serve the data. To use, type a search query into the search box and the site will return a paginated list of search results.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as authentication, routing, sessions, queueing, and caching.
+A list of previous searches is shown below, clicking on these will search for these.
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb inversion of control container, expressive migration system, and tightly integrated unit testing support give you the tools you need to build any application with which you are tasked.
+It is assumed that you have a laravel installation and MYSQL/NginX installed and that you are able to set up a simple .
 
-## Official Documentation
+A simple nginx config for this application is as follows:
 
-Documentation for the framework can be found on the [Laravel website](http://laravel.com/docs).
+server {
+        listen 80;
+        server_name flckr;
+        index index.php index.html index.htm;
+        client_max_body_size 800M;
 
-## Contributing
+        location / {
+                root /var/www/flckr/public;
+                try_files $uri $uri/ /index.php?$args;
+        }
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
+        location ~ \.php$ {
+                root /var/www/flckr/public;
+                try_files $uri $uri/ /index.php?$args;
+                index index.php
+                fastcgi_index index.php;
+                fastcgi_param PATH_INFO $fastcgi_path_info;
+                fastcgi_param PATH_TRANSLATED $document_root$fastcgi_path_info;
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                include fastcgi_params;
+        }
+}
 
-## Security Vulnerabilities
+In order to run this you will need to go to \config\database.php and update line 60 and 61 with your database username and password
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
 
-## License
+You will then need to create a mysql database with the name of flckr or alternatively update the database name on line 59 with your database name.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+Then you will need to go to the root directory of the application and run php artisan migrate in order to have the database tables installed.
+
+I went with Laravel as it is a great framework for when you need to set up a site really quickly.
+
+The modelling has been kept on a fairly simple basis with Models for Search criteria and the user themselves.
+
+I unfortunately ran out of time and was unable to implement the following:
+
+Unit testing.
+
+Angular.js Front end
+
+Upserting search terms rather then creating new terms and grouping search results.
+
+
+
