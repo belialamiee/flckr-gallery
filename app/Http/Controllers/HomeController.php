@@ -19,7 +19,7 @@ class HomeController extends Controller
     }
 
     /**
-     * Show the application Dashboard
+     * This is the application itself, everything happens here.
      * @return \Illuminate\Http\Response
      */
     public function index()

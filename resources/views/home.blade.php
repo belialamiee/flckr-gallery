@@ -42,14 +42,10 @@
                         <a class="btn btn-default next">
                             Next
                         </a>
-
-
                     </div>
-
                 </div>
             </div>
         </div>
-
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <div class="panel panel-default">
@@ -58,7 +54,6 @@
                     <div class="panel-body" style="cursor:pointer;">
                         <ul>
                             <?php
-
                             if(count($searches)){
                             $counter = 0;
                             foreach ($searches as $search) {
@@ -67,7 +62,8 @@
                                 break;
                             }
                             ?>
-                            <li style="list-style: none; border-bottom:1px solid lightgray; margin:10px;" id="<?= $search->searchTerm;?>" class="searchNow"><?= $search->searchTerm;?></li>
+                            <li style="list-style: none; border-bottom:1px solid lightgray; margin:10px;"
+                                id="<?= $search->searchTerm;?>" class="searchNow"><?= $search->searchTerm;?></li>
                             <?php
                             }
                             }else{
@@ -82,7 +78,6 @@
             </div>
         </div>
     </div>
-
     <div id="imageModal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -99,10 +94,8 @@
             </div>
         </div>
     </div>
-
     <script type="text/javascript" src=""></script>
     <script type="text/javascript">
-
         var tableData = "";
         <?php if($searchData){
                 echo "tableData = ". json_encode($searchData).";";
@@ -122,11 +115,10 @@
                 echo "pageNumber = ". $searchData['pageNumber'].";";
                 }?>
 
-                            var dataTable = $('#resultsTable').DataTable({
+             var dataTable = $('#resultsTable').DataTable({
             dom: '<"datatable-header"><""t><"datatable-footer">',
             data: tableData.searchResults,
             columns: [
-
                 {
                     "data": "title",
                     render: function (data, type, full, meta) {
@@ -141,6 +133,7 @@
                 }
             ]
         });
+
         $('.img').on('click', function (e) {
             var src = e.target.src;
             //remove the -t option which shows a thumb instead
@@ -158,18 +151,23 @@
 
         $('.next').on('click', function () {
             pageNumber++;
-            var url = '/search-ajax/searchTerm/' + $("#searchTerm").val()+'/pageNumber/'+pageNumber;
-            $.get( url, function(data) {
-            tableData = data;
+            var url = '/search-ajax/searchTerm/' + $("#searchTerm").val() + '/pageNumber/' + pageNumber;
+            $.get(url, function (data) {
+                dataTable.clear();
+                dataTable.rows.add(data.searchResults);
+                dataTable.draw();
             });
-
-            dataTable.ajax.reload();
-
         });
+
         $('.previous').on('click', function () {
             pageNumber--;
-            //make ajax
-            console.log('call previous data');
+            var url = '/search-ajax/searchTerm/' + $("#searchTerm").val() + '/pageNumber/' + pageNumber;
+            $.get(url, function (data) {
+                dataTable.clear();
+                dataTable.rows.add(data.searchResults);
+                dataTable.draw();
+            });
         });
     </script>
+
 @endsection

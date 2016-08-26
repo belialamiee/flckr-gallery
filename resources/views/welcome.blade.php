@@ -9,6 +9,7 @@
 
                     <div class="panel-body">
                         <p> Welcome to the Flickr search Engine.</p>
+                        <p><a href="{{ url('/home') }}">Click Here</a> to enter and use the search engine.</p>
                         <p> Please log in or register using the links above</p>
                     </div>
                 </div>

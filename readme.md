@@ -1,6 +1,10 @@
 # Flckr-Gallery
 
-This flicker search engine is built on top of Laravel using NginX to serve the data. To use, type a search query into the search box and the site will return a paginated list of search results.
+This flicker search engine is built on top of Laravel using NginX to serve the data.
+
+To use, first a user will have to register/login
+
+Once logged in, type a search query into the search box and the site will return a paginated list of search results.
 
 A list of previous searches is shown below, clicking on these will search for these.
 
@@ -60,9 +64,3 @@ I unfortunately ran out of time and was unable to implement the following:
 Unit testing.
 
 Angular.js Front end
-
-Upserting search terms rather then creating new terms each time, this will also enable us to remove the grouping of search results.
-
-At present the next and previous functionality for the pagination is not working properly, this is getting fixed as a priority, hopefully I have time.
-
-

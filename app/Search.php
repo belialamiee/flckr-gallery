@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 /**
+ * Simple model for holding the Search terms and attaching them to a user.
+ * This is so that we can provide a history of recent searches for the user.
  * Users Search Terms
  * Class Search
  * @package App
